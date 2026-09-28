@@ -1,0 +1,17 @@
+# dependencies / builds
+node_modules/
+dist/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+.venv/
+venv/
+# secrets — only the *.env.example templates are committed
+.env
+.env.*
+!.env.example
+# runtime data / caches
+backend/storage/
+storage/
+.pytest_cache/
+.ruff_cache/

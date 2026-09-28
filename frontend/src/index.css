@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ design tokens */
+:root {
+  --background: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #f1f3f8;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --subtle: #94a3b8;
+  --border: #e3e7ef;
+  --border-strong: #cfd6e3;
+  --ring: #4f6bed;
+
+  --primary: #0f1b3d;          /* deep navy */
+  --primary-foreground: #ffffff;
+  --primary-soft: #e8ecf7;
+  --accent: #4f6bed;           /* cool indigo-blue — information / AI */
+  --accent-soft: #eef1fe;
+  --accent-foreground: #ffffff;
+
+  --success: #059669;  --success-soft: #e7f6f0;
+  --warning: #b45309;  --warning-soft: #fdf3e2;
+  --danger: #c02626;   --danger-soft: #fdecec;
+  --critical: #7f1d1d; --critical-soft: #fbe3e3;
+  --info: #2563eb;     --info-soft: #e8f0fe;
+
+  --chart-1: #0f1b3d; --chart-2: #4f6bed; --chart-3: #059669; --chart-4: #d97706; --chart-5: #c02626; --chart-6: #94a3b8;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 1px rgb(15 23 42 / 0.03);
+  --shadow-pop: 0 10px 30px -12px rgb(15 23 42 / 0.25);
+  --radius: 10px;
+}
+
+.dark {
+  --background: #0a0f1c;
+  --surface: #111827;
+  --surface-2: #172033;
+  --foreground: #e6ebf5;
+  --muted: #94a3b8;
+  --subtle: #64748b;
+  --border: #1f2a40;
+  --border-strong: #2c3a55;
+  --ring: #7d93ff;
+
+  --primary: #dbe4ff;
+  --primary-foreground: #0a0f1c;
+  --primary-soft: #1a2440;
+  --accent: #7d93ff;
+  --accent-soft: #1a2345;
+  --accent-foreground: #0a0f1c;
+
+  --success: #34d399;  --success-soft: #0f2a22;
+  --warning: #fbbf24;  --warning-soft: #2c2210;
+  --danger: #f87171;   --danger-soft: #2f1416;
+  --critical: #fca5a5; --critical-soft: #3a1214;
+  --info: #60a5fa;     --info-soft: #102140;
+
+  --chart-1: #9fb3ff; --chart-2: #7d93ff; --chart-3: #34d399; --chart-4: #fbbf24; --chart-5: #f87171; --chart-6: #475569;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-pop: 0 12px 32px -12px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-critical: var(--critical);
+  --color-critical-soft: var(--critical-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --shadow-card: var(--shadow-card);
+  --shadow-pop: var(--shadow-pop);
+  --radius-card: var(--radius);
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  html, body { background: var(--background); color: var(--foreground); }
+  body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
+  ::selection { background: var(--accent-soft); }
+}
+
+@layer utilities {
+  .tabular { font-variant-numeric: tabular-nums; }
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+}
+
+/* live agent step indicator */
+@keyframes nt-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.85); } }
+.nt-pulse { animation: nt-pulse 1.2s ease-in-out infinite; }
+@keyframes nt-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.nt-in { animation: nt-in .28s ease-out both; }
+@keyframes nt-shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.nt-skeleton { background: linear-gradient(90deg, var(--surface-2) 0, var(--border) 50%, var(--surface-2) 100%); background-size: 800px 100%; animation: nt-shimmer 1.4s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 160ms; }

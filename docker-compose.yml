@@ -1,0 +1,48 @@
+# Local full stack: Postgres + pgvector, FastAPI, Vite dev server.
+#   docker compose up --build        ->  http://localhost:5173  (API on http://localhost:8000)
+# Data persists in the "pgdata" volume; restarting does NOT re-seed or wipe it.
+# Fresh demo data:  docker compose exec api python -m scripts.seed --reset
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres        # local-only credential
+      POSTGRES_DB: novatech
+      TZ: UTC
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d novatech"]
+      interval: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/novatech
+      ENVIRONMENT: development
+      JWT_SECRET: ${JWT_SECRET:-local-dev-secret-change-me-0123456789abcdef}
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      SEED_DEMO_DATA: "true"             # seeds only when the database is empty
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+    ports: ["8000:8000"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment:
+      VITE_API_PROXY: http://api:8000    # dev proxy target inside the compose network (VITE_API_URL stays empty)
+    volumes:
+      - ./frontend:/app
+      - web_node_modules:/app/node_modules
+    ports: ["5173:5173"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  web_node_modules:
